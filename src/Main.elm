@@ -19,8 +19,8 @@ col paletteColor =
            )
 
 
-googleFont : String -> Attribute msg
-googleFont fontName =
+googleFont : String -> String -> Attribute msg
+googleFont fontName weight =
     let
         fontString =
             String.replace " " "+" fontName
@@ -30,22 +30,28 @@ googleFont fontName =
             { url =
                 "https://fonts.googleapis.com/css?family="
                     ++ fontString
+                    ++ ":"
+                    ++ weight
             , name = fontName
             }
         ]
 
 
-display =
-    googleFont "Pinyon Script"
+cormorant =
+    googleFont "Cormorant" "400i,700"
 
 
-caps =
-    googleFont "Playfair Display"
+montserrat =
+    googleFont "Montserrat" "400i,700"
 
 
-scale =
-    modular 64 2.0
+scaleInt =
+    scaleFloat
         >> round
+
+
+scaleFloat =
+    modular 24 2.0
 
 
 color =
@@ -60,47 +66,131 @@ color =
             comp2 |> ColGen.shade 40 |> ColGen.tone -20
 
         engine =
-            comp1 |> ColGen.tint 10 |> ColGen.tone -55
+            comp1 |> ColGen.shade 5 |> ColGen.tone -65
+
+        pumpor =
+            engine |> ColGen.tint 5 |> ColGen.tone -10
 
         design =
             base |> ColGen.tint 5 |> ColGen.tone -35
+
+        shadow =
+            background |> ColGen.shade 10
+
+        body =
+            engine |> ColGen.tint 20 |> ColGen.tone -5
+
+        border =
+            design |> ColGen.shade 15 |> ColGen.tone -20
+
+        title =
+            design |> ColGen.shade 5 |> ColGen.tone -5
     in
-    { design = col design, background = col background, engine = col engine }
+    { design = col design
+    , background = col background
+    , pumpor = col pumpor
+    , shadow = col shadow
+    , body = col body
+    , border = col border
+    , title = col title
+    }
 
 
 overTitle : Element msg
 overTitle =
     el
-        [ display
+        [ cormorant
         , Font.color color.design
-        , Font.shadow { offset = ( 1, 1 ), blur = 2, color = rgb 0 0 0 }
-        , Font.size <| scale 2
+        , Font.shadow { offset = ( 1, 1 ), blur = 2, color = color.shadow }
+        , Font.size <| scaleInt 3
         , Font.unitalicized
+        , Font.bold
         , centerX
-        , moveDown 12
+        , moveDown <| scaleFloat -2
         , Font.letterSpacing 0
-        , Font.regular
         ]
     <|
-        text "Smashing"
+        text "Sönderslagna"
 
 
 underTitle : Element msg
 underTitle =
     el
-        [ caps
-        , Font.size <| scale 1
-        , Font.hairline
+        [ montserrat
+        , Font.size <| scaleInt 3
+        , Font.letterSpacing 2
         , Font.italic
-        , Font.letterSpacing 18
+        , Font.color color.background
         , centerX
-        , padding 32
-        , Background.color color.engine
+        , padding <| scaleInt -1
+        , Background.color color.body
         , above overTitle
-        , Border.shadow { offset = ( 2, 2 ), size = 3, blur = 5, color = rgb 0 0 0 }
+        , Border.shadow { offset = ( 2, 2 ), size = 3, blur = 5, color = color.shadow }
         ]
     <|
-        text "PUMPKINS"
+        text "PUMPOR"
+
+
+lyricsTitle : String -> Element msg
+lyricsTitle txt =
+    el
+        [ montserrat
+        , Font.bold
+        , Font.size <| scaleInt 2
+        , Font.color color.title
+        , Font.shadow { offset = ( 2, 2 ), blur = 2, color = color.shadow }
+        , centerX
+        , padding <| scaleInt 1
+        ]
+    <|
+        text txt
+
+
+lyricsBody : String -> Element msg
+lyricsBody txt =
+    paragraph
+        [ cormorant
+        , Font.italic
+        , Font.size <| scaleInt 1
+        , Font.color color.background
+        , centerX
+        , spacing 5
+        ]
+        [ text txt ]
+
+
+lyrics : Element msg
+lyrics =
+    el
+        [ Border.width 6
+        , width fill
+        ]
+    <|
+        row
+            [ spacing <| scaleInt 2
+            , padding <| scaleInt 2
+            , Background.color color.body
+            , Border.color color.border
+            , width <| px 1500
+            , Border.width 6
+            , centerX
+            ]
+        <|
+            [ column
+                [ alignTop
+                , Border.width 3
+                ]
+                [ lyricsTitle "Genom Ögon av Rubin"
+                , lyricsBody rubyTxt
+                ]
+            , column
+                [ alignTop
+                , Border.width 3
+                ]
+                [ lyricsTitle "Blöder Orkidéen"
+                , lyricsBody orchidTxt
+                ]
+            ]
 
 
 main : Html msg
@@ -114,7 +204,120 @@ main =
             [ spacing 0
             , width fill
             , height fill
+            , spacing <| scaleInt 2
+            , centerX
             ]
-            [ overTitle
-            , underTitle
+            [ column [ centerX ]
+                [ overTitle
+                , underTitle
+                ]
+            , lyrics
             ]
+
+
+rubyTxt : String
+rubyTxt =
+    """
+Snärj mig med alltid
+Och dra in mig med kansken
+Din oskyldighet är en skatt, din oskyldighet är döden
+Din oskyldighet är allt jag har
+Andas under vatten
+Och leva under glas
+
+Om du spinner din kärlek kring
+Dina drömmars hemligheter
+Kan du finna din kärlek borta
+Och inte riktigt som den verkade
+Framträda för att försvinna
+Under dina mörkaste rädslor
+
+Jag tror på aldrig
+Jag tror på hela vägen
+Men tro är att inte märka, tro är bara någon religion
+Och religion kan inte hjälpa dig fly
+Och med denna ring gifter vi oss sant
+Och med denna ring gifter vi oss nu
+Och med denna ring spelar jag så död
+Men ingen ber om sanningen, så låt mig berätta
+
+Om du spinner din kärlek kring
+Dina drömmars hemligheter
+Kan du finna din kärlek borta
+Och inte riktigt som den verkade
+Framträda för att försvinna
+Under dina mörkaste rädslor
+
+Till uppenbarelser av rosenkindad ungdom
+Kommer ingen för att rädda dig
+Så säg din frid i draget sorl
+Men ungdom är slösat på de unga
+
+Din styrka är min svaghet, din svaghet mitt hat
+Min kärlek för dig kan bara inte förklara
+Varför vi är evigt frysta, evigt vackra
+Evigt förlorade inuti oss själva
+Natten har kommit för att hålla oss unga
+
+Natten har kommit för att hålla oss unga
+Natten har kommit för att hålla oss unga
+Natten har kommit för att hålla oss unga
+Natten har kommit för att hålla oss unga
+Natten har kommit för att hålla oss unga
+"""
+
+
+orchidTxt : String
+orchidTxt =
+    """
+Om livet är mitt vittne
+Kärlek min sång
+Om inget betyder ingen
+Då tom, hör jag till
+Om rädsla besegras lätt
+Kan jag locka
+Mjölk från blomman
+Blod från gryningen
+
+Så här är vi
+På din scen
+Skratten vi delade
+Drömmarna vi spart
+
+Blöder orkidéen
+Vi blöder orkidéen
+Blöder orkidéen
+
+Välsignad min svaghet
+Välsignade mina oförätter
+Som hat bildar sviten
+Av en efter en
+Såsom friheter dör lätt
+Röstar vi viljan
+Det är moln i min dusch
+Spöken i mina armar
+
+Ungdom är var du är
+Tro någon syndares barn
+
+Vi blöder orkidéen
+Vi blöder orkidéen
+Blöder orkidéen
+
+Förgylld äro denna tysta marsch förbi seger genom larm
+Så följaktligen hänförd
+Står den här viljan för mycket?
+Men hjärtat är orört av hjärtats oälskade
+
+Blöder orkidéen
+Blöder orkidéen
+Här är vi
+På din scen
+Kärleken vi delar
+Drömmarna vi kommer spara
+
+De blöder orkidéen
+De blöder orkidéen
+De blöder orkidéen
+Blöder orkidéen
+"""
