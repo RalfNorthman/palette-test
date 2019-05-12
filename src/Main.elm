@@ -68,32 +68,17 @@ color =
     { design = col design, background = col background, engine = col engine }
 
 
-type Visibility
-    = Visible
-    | Ghost
-
-
-designText : Visibility -> Element msg
-designText vis =
-    let
-        diff =
-            case vis of
-                Visible ->
-                    [ Font.color color.design
-                    , Font.shadow { offset = ( 1, 1 ), blur = 2, color = rgb 0 0 0 }
-                    ]
-
-                Ghost ->
-                    [ Font.color color.background ]
-    in
+designText : Element msg
+designText =
     el
-        (diff
-            ++ [ display
-               , Font.size <| scale 2
-               , centerX
-               , moveDown 12
-               ]
-        )
+        [ display
+        , Font.color color.design
+        , Font.shadow { offset = ( 1, 1 ), blur = 2, color = rgb 0 0 0 }
+        , Font.size <| scale 2
+        , centerX
+        , moveDown 12
+        , Font.letterSpacing 0
+        ]
     <|
         text "Design"
 
@@ -108,7 +93,7 @@ engineeringText =
         , centerX
         , paddingXY 8 16
         , Background.color color.engine
-        , above <| designText Visible
+        , above designText
         , Border.shadow { offset = ( 2, 2 ), size = 3, blur = 5, color = rgb 0 0 0 }
         ]
     <|
@@ -127,6 +112,6 @@ main =
             , width fill
             , height fill
             ]
-            [ designText Ghost
+            [ designText
             , engineeringText
             ]
