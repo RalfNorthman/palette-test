@@ -39,8 +39,8 @@ display =
     googleFont "Pinyon Script"
 
 
-montserrat =
-    googleFont "Montserrat"
+caps =
+    googleFont "Playfair Display"
 
 
 scale =
@@ -68,36 +68,39 @@ color =
     { design = col design, background = col background, engine = col engine }
 
 
-designText : Element msg
-designText =
+overTitle : Element msg
+overTitle =
     el
         [ display
         , Font.color color.design
         , Font.shadow { offset = ( 1, 1 ), blur = 2, color = rgb 0 0 0 }
         , Font.size <| scale 2
+        , Font.unitalicized
         , centerX
         , moveDown 12
         , Font.letterSpacing 0
+        , Font.regular
         ]
     <|
-        text "Design"
+        text "Smashing"
 
 
-engineeringText : Element msg
-engineeringText =
+underTitle : Element msg
+underTitle =
     el
-        [ montserrat
+        [ caps
         , Font.size <| scale 1
         , Font.hairline
-        , Font.letterSpacing -1
+        , Font.italic
+        , Font.letterSpacing 18
         , centerX
-        , paddingXY 8 16
+        , padding 32
         , Background.color color.engine
-        , above designText
+        , above overTitle
         , Border.shadow { offset = ( 2, 2 ), size = 3, blur = 5, color = rgb 0 0 0 }
         ]
     <|
-        text "Engineering"
+        text "PUMPKINS"
 
 
 main : Html msg
@@ -112,6 +115,6 @@ main =
             , width fill
             , height fill
             ]
-            [ designText
-            , engineeringText
+            [ overTitle
+            , underTitle
             ]
