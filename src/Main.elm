@@ -42,7 +42,7 @@ cormorant =
 
 
 montserrat =
-    googleFont "Montserrat" "400i,700"
+    googleFont "Montserrat" "700i,800"
 
 
 scaleInt =
@@ -51,7 +51,7 @@ scaleInt =
 
 
 scaleFloat =
-    modular 24 2.0
+    modular 22 1.618
 
 
 color =
@@ -69,16 +69,16 @@ color =
             comp1 |> ColGen.shade 5 |> ColGen.tone -65
 
         pumpor =
-            engine |> ColGen.tint 5 |> ColGen.tone -10
+            engine |> ColGen.tint 15 |> ColGen.tone -7
+
+        body =
+            engine |> ColGen.tint 22 |> ColGen.tone -7
 
         design =
             base |> ColGen.tint 5 |> ColGen.tone -35
 
         shadow =
             background |> ColGen.shade 10
-
-        body =
-            engine |> ColGen.tint 20 |> ColGen.tone -5
 
         border =
             design |> ColGen.shade 15 |> ColGen.tone -20
@@ -102,7 +102,7 @@ overTitle =
         [ cormorant
         , Font.color color.design
         , Font.shadow { offset = ( 1, 1 ), blur = 2, color = color.shadow }
-        , Font.size <| scaleInt 3
+        , Font.size <| scaleInt 4
         , Font.unitalicized
         , Font.bold
         , centerX
@@ -117,13 +117,14 @@ underTitle : Element msg
 underTitle =
     el
         [ montserrat
-        , Font.size <| scaleInt 3
+        , Font.size <| scaleInt 4
         , Font.letterSpacing 2
+        , Font.bold
         , Font.italic
         , Font.color color.background
         , centerX
         , padding <| scaleInt -1
-        , Background.color color.body
+        , Background.color color.pumpor
         , above overTitle
         , Border.shadow { offset = ( 2, 2 ), size = 3, blur = 5, color = color.shadow }
         ]
@@ -135,10 +136,9 @@ lyricsTitle : String -> Element msg
 lyricsTitle txt =
     el
         [ montserrat
-        , Font.bold
+        , Font.extraBold
         , Font.size <| scaleInt 2
-        , Font.color color.title
-        , Font.shadow { offset = ( 2, 2 ), blur = 2, color = color.shadow }
+        , Font.color color.border
         , centerX
         , padding <| scaleInt 1
         ]
@@ -147,49 +147,70 @@ lyricsTitle txt =
 
 
 lyricsBody : String -> Element msg
-lyricsBody txt =
-    paragraph
-        [ cormorant
-        , Font.italic
-        , Font.size <| scaleInt 1
-        , Font.color color.background
-        , centerX
-        , spacing 5
+lyricsBody inTxt =
+    let
+        myParagraph txt =
+            let
+                lines =
+                    String.lines txt
+            in
+            column
+                [ cormorant
+                , width shrink
+                , Font.italic
+                , Font.size <| scaleInt 1
+                , Font.color color.background
+                , Font.center
+                , centerX
+                , spacing <| scaleInt -3
+                ]
+            <|
+                List.map text lines
+
+        toParList =
+            inTxt
+                |> String.split "\n\n"
+    in
+    column
+        [ spacing <| scaleInt 1
+        , padding <| scaleInt 1
+        , width fill
         ]
-        [ text txt ]
+    <|
+        List.map myParagraph toParList
 
 
 lyrics : Element msg
 lyrics =
     el
-        [ Border.width 6
-        , width fill
+        [ width fill
+        , padding <| scaleInt 2
         ]
     <|
         row
-            [ spacing <| scaleInt 2
+            [ spaceEvenly
             , padding <| scaleInt 2
             , Background.color color.body
             , Border.color color.border
-            , width <| px 1500
+            , width shrink
             , Border.width 6
             , centerX
             ]
         <|
-            [ column
+            [ el [] none
+            , column
                 [ alignTop
-                , Border.width 3
                 ]
                 [ lyricsTitle "Genom Ögon av Rubin"
                 , lyricsBody rubyTxt
                 ]
             , column
                 [ alignTop
-                , Border.width 3
                 ]
                 [ lyricsTitle "Blöder Orkidéen"
                 , lyricsBody orchidTxt
                 ]
+            , el [] none
             ]
 
 
