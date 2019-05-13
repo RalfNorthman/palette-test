@@ -39,11 +39,11 @@ googleFont fontName weight =
 
 
 cormorant =
-    googleFont "Cormorant" "400i,700"
+    googleFont "Cormorant" "400i,700i"
 
 
 montserrat =
-    googleFont "Montserrat" "700i,800"
+    googleFont "Montserrat" "700,800"
 
 
 scaleInt =
@@ -104,14 +104,14 @@ overTitle =
         , Font.color color.design
         , Font.shadow { offset = ( 1, 1 ), blur = 2, color = color.shadow }
         , Font.size <| scaleInt 4
-        , Font.unitalicized
+        , Font.italic
         , Font.bold
         , centerX
         , moveDown <| scaleFloat -2
         , Font.letterSpacing 0
         ]
     <|
-        text "Sönderslagna"
+        text "Slå Sönder"
 
 
 underTitle : Element msg
@@ -119,14 +119,12 @@ underTitle =
     el
         [ montserrat
         , Font.size <| scaleInt 4
-        , Font.letterSpacing 2
         , Font.bold
-        , Font.italic
         , Font.color color.background
+        , Font.letterSpacing -3
         , centerX
-        , padding <| scaleInt -1
+        , padding <| scaleInt -2
         , Background.color color.pumpor
-        , above overTitle
         , Border.shadow { offset = ( 2, 2 ), size = 3, blur = 5, color = color.shadow }
         ]
     <|
