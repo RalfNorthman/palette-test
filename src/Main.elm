@@ -2,6 +2,7 @@ module Main exposing (main)
 
 import Color
 import Color.Generator as ColGen
+import Debug
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
@@ -51,7 +52,7 @@ scaleInt =
 
 
 scaleFloat =
-    modular 22 1.618
+    modular 24 1.618
 
 
 color =
@@ -140,7 +141,8 @@ lyricsTitle txt =
         , Font.size <| scaleInt 2
         , Font.color color.border
         , centerX
-        , padding <| scaleInt 1
+        , padding <| scaleInt -3
+        , width shrink
         ]
     <|
         text txt
@@ -162,7 +164,7 @@ lyricsBody inTxt =
                 , Font.color color.background
                 , Font.center
                 , centerX
-                , spacing <| scaleInt -3
+                , spacing <| scaleInt -4
                 ]
             <|
                 List.map text lines
@@ -173,7 +175,7 @@ lyricsBody inTxt =
     in
     column
         [ spacing <| scaleInt 1
-        , padding <| scaleInt 1
+        , padding <| scaleInt -2
         , width fill
         ]
     <|
@@ -184,12 +186,12 @@ lyrics : Element msg
 lyrics =
     el
         [ width fill
-        , padding <| scaleInt 2
+        , padding <| scaleInt 1
         ]
     <|
         row
             [ spaceEvenly
-            , padding <| scaleInt 2
+            , padding <| scaleInt 1
             , Background.color color.body
             , Border.color color.border
             , width shrink
