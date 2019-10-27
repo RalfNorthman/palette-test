@@ -20,30 +20,62 @@ col paletteColor =
            )
 
 
-googleFont : String -> String -> Attribute msg
-googleFont fontName weight =
-    let
-        fontString =
-            String.replace " " "+" fontName
-    in
+knockoutRegular =
     Font.family
-        [ Font.external
-            { url =
-                "https://fonts.googleapis.com/css?family="
-                    ++ fontString
-                    ++ ":"
-                    ++ weight
-            , name = fontName
-            }
+        [ Font.typeface "Knockout 49 A"
+        , Font.sansSerif
         ]
 
 
-cormorant =
-    googleFont "Cormorant" "400i,700i"
+tungstenRounded =
+    Font.family
+        [ Font.typeface "Tungsten Rounded A"
+        , Font.sansSerif
+        ]
 
 
-montserrat =
-    googleFont "Montserrat" "700,800"
+inkwellSerif =
+    Font.family
+        [ Font.typeface "Inkwell Serif A"
+        , Font.serif
+        ]
+
+
+hoeflerTitling =
+    Font.family
+        [ Font.typeface "Hoefler Titling A"
+        , Font.serif
+        ]
+
+
+hoeflerText =
+    Font.family
+        [ Font.typeface "Hoefler Text A"
+        , Font.serif
+        ]
+
+
+inkwellSans =
+    Font.family
+        [ Font.typeface "Inkwell Sans A"
+        , Font.sansSerif
+        ]
+
+
+smashingFont =
+    knockoutRegular
+
+
+pumpkinsFont =
+    tungstenRounded
+
+
+displayFont =
+    inkwellSerif
+
+
+versesFont =
+    inkwellSans
 
 
 scaleInt =
@@ -52,7 +84,7 @@ scaleInt =
 
 
 scaleFloat =
-    modular 24 1.618
+    modular 20 1.618
 
 
 color =
@@ -70,19 +102,19 @@ color =
             comp1 |> ColGen.shade 5 |> ColGen.tone -65
 
         pumpor =
-            engine |> ColGen.tint 15 |> ColGen.tone -7
+            engine |> ColGen.tint 15 |> ColGen.tone -10 |> ColGen.shade 22
 
         body =
             engine |> ColGen.tint 22 |> ColGen.tone -7
 
         design =
-            base |> ColGen.tint 5 |> ColGen.tone -35
+            base |> ColGen.tint 10 |> ColGen.tone -15
 
         shadow =
-            background |> ColGen.shade 10
+            background |> ColGen.shade 1
 
         border =
-            design |> ColGen.shade 15 |> ColGen.tone -20
+            design |> ColGen.shade 30 |> ColGen.tone -10
 
         title =
             design |> ColGen.shade 5 |> ColGen.tone -5
@@ -100,47 +132,56 @@ color =
 overTitle : Element msg
 overTitle =
     el
-        [ cormorant
-        , Font.color color.design
-        , Font.shadow { offset = ( 1, 1 ), blur = 2, color = color.shadow }
+        [ Font.color color.design
         , Font.size <| scaleInt 4
-        , Font.italic
-        , Font.bold
+        , Font.regular
+        , Font.letterSpacing 2
         , centerX
-        , moveDown <| scaleFloat -2
-        , Font.letterSpacing 0
+        , smashingFont
+        , Font.shadow { offset = ( 2, 2 ), blur = 3, color = color.background }
         ]
     <|
-        text "Slå Sönder"
+        text "Smashing"
+
+
+adjust =
+    2
+
+
+adjustFloat =
+    scaleFloat adjust
+
+
+adjustInt =
+    scaleInt adjust
 
 
 underTitle : Element msg
 underTitle =
     el
-        [ montserrat
-        , Font.size <| scaleInt 4
+        [ Font.size <| scaleInt 4
+        , Font.color color.shadow
         , Font.bold
-        , Font.color color.background
-        , Font.letterSpacing -3
+        , pumpkinsFont
         , centerX
-        , padding <| scaleInt -2
+        , paddingXY (scaleInt 1) (scaleInt -1)
         , Background.color color.pumpor
-        , Border.shadow { offset = ( 2, 2 ), size = 3, blur = 5, color = color.shadow }
+        , Border.rounded <| scaleInt -2
+        , above <| el [ moveDown adjustFloat, centerX ] overTitle
         ]
     <|
-        text "PUMPOR"
+        text "PUMPKINs"
 
 
-lyricsTitle : String -> Element msg
-lyricsTitle txt =
+lyricsTitle : Color -> String -> Element msg
+lyricsTitle clr txt =
     el
-        [ montserrat
-        , Font.extraBold
-        , Font.size <| scaleInt 2
-        , Font.color color.border
+        [ Font.size <| scaleInt 3
+        , Font.color clr
         , centerX
-        , padding <| scaleInt -3
         , width shrink
+        , displayFont
+        , Font.extraBold
         ]
     <|
         text txt
@@ -155,9 +196,10 @@ lyricsBody inTxt =
                     String.lines txt
             in
             column
-                [ cormorant
+                [ versesFont
                 , width shrink
                 , Font.italic
+                , Font.regular
                 , Font.size <| scaleInt 1
                 , Font.color color.background
                 , Font.center
@@ -180,6 +222,30 @@ lyricsBody inTxt =
         List.map myParagraph toParList
 
 
+lyricsBoxAttributes =
+    [ spaceEvenly
+    , padding <| scaleInt 1
+    , Background.color color.body
+    , Border.color color.border
+    , width shrink
+    , Border.width 6
+    , centerX
+    ]
+
+
+rubyTitle =
+    column [ spacing <| -(scaleInt -1) ]
+        [ lyricsTitle color.border "Genom Ögon"
+        , row [ Font.alignLeft ]
+            [ lyricsTitle (rgba 0 0 0 0) "Genom "
+            , el
+                [ moveLeft <| scaleFloat 1 ]
+              <|
+                lyricsTitle color.border "av Rubin"
+            ]
+        ]
+
+
 lyrics : Element msg
 lyrics =
     el
@@ -188,29 +254,24 @@ lyrics =
         ]
     <|
         row
-            [ spaceEvenly
-            , padding <| scaleInt 1
-            , Background.color color.body
-            , Border.color color.border
-            , width shrink
-            , Border.width 6
-            , centerX
-            ]
+            lyricsBoxAttributes
         <|
-            [ el [] none
+            [ el [ width <| px <| scaleInt 2 ] none
             , column
                 [ alignTop
+                , spacing -(scaleInt 1)
                 ]
-                [ lyricsTitle "Genom Ögon av Rubin"
+                [ el [ moveRight <| scaleFloat 3 ]
+                    rubyTitle
                 , lyricsBody rubyTxt
                 ]
+            , el [] none
             , column
-                [ alignTop
-                ]
-                [ lyricsTitle "Blöder Orkidéen"
+                [ alignTop ]
+                [ el [ moveRight <| scaleFloat 3 ] <|
+                    lyricsTitle color.border "Blöder Orkidéen"
                 , lyricsBody orchidTxt
                 ]
-            , el [] none
             ]
 
 
@@ -228,7 +289,10 @@ main =
             , spacing <| scaleInt 2
             , centerX
             ]
-            [ column [ centerX ]
+            [ column
+                [ centerX
+                , spacing -adjustInt
+                ]
                 [ overTitle
                 , underTitle
                 ]
